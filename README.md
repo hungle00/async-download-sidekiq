@@ -1,24 +1,14 @@
-# README
+## Async export file with sidekiq
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+This repo demonstrates 2 way to export large file with background job
 
-Things you may want to cover:
+Run sidekiq server
+```
+bundle exec sidekiq
+```
 
-* Ruby version
+Run rails server with css and js watcher
 
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+```
+./bin/dev
+```

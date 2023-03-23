@@ -1,14 +1,14 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["download", "status"];
+  static targets = ["download", "progress", "progressWrapper"];
 
   export() {
     fetch('/export_user')
       .then(response => response.json())
       .then(data => {
         const jobId = data.jid;
-        this.statusTarget.textContent = "Exporting ...";
+        this.progressWrapperTarget.classList.remove("display-none");
 
         this.timer = setInterval(() => {
           this.checkJobStatus(jobId)
@@ -20,14 +20,14 @@ export default class extends Controller {
     fetch(`/export_status?job_id=${jobId}`)
       .then(response => response.json())
       .then(data => {
-        const percentage = data.percentage;
-        this.statusTarget.textContent = `Exporting ${percentage}%`;
+        const progress = data.percentage;
+        this.progressTarget.style.width = `${progress}%`;
         if(data.status == "error") {
             this.stopCheckJobStatus();
         }else if(data.status === "complete") {
           this.stopCheckJobStatus()
           this.downloadTarget.href = `/export_download.xlsx?id=${jobId}`;
-          this.downloadTarget.classList.remove("hidden");
+          this.downloadTarget.classList.remove("display-none");
         }
       })
   }
