@@ -2,20 +2,20 @@ import { Controller } from "@hotwired/stimulus"
 import consumer from "../channels/consumer"
 
 export default class extends Controller {
-  static targets = ["status"];
+  static targets = ["progress", "progressWrapper"];
 
   export() {
     fetch('/export_user')
       .then(() => {
-        this.statusTarget.textContent = "Exporting ...";
-        this.subscribe_channel(this.downloadTarget)
+        this.progressWrapperTarget.classList.remove("display-none");
+        this.subscribe_channel(this.progressTarget)
       })
       .catch((error) => {
         console.error('Error:', error);
       });
   }
 
-  subscribe_channel() {
+  subscribe_channel(progressTarget) {
     this.channel = consumer.subscriptions.create("ExportUserChannel", {
       connected() {
         console.log("hello")
@@ -26,8 +26,11 @@ export default class extends Controller {
       },
     
       received(data) {
-        console.log(data)
-        window.location.href = `/export_download.xlsx?id=${data}`
+        if (data["jid"] == null) {
+          progressTarget.style.width = `${data["progress"]}%`;
+        } else {
+          window.location.href = `/export_download.xlsx?id=${data["jid"]}`
+        }
       }
     });
   }
