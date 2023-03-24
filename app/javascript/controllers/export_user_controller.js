@@ -1,44 +1,37 @@
 import { Controller } from "@hotwired/stimulus"
+import consumer from "../channels/consumer"
 
 export default class extends Controller {
-  static targets = ["download", "progress", "progressWrapper"];
+  static targets = ["progress", "progressWrapper"];
 
   export() {
     fetch('/export_user')
-      .then(response => response.json())
-      .then(data => {
-        const jobId = data.jid;
+      .then(() => {
         this.progressWrapperTarget.classList.remove("display-none");
-
-        this.timer = setInterval(() => {
-          this.checkJobStatus(jobId)
-        }, 1000);
+        this.subscribe_channel(this.progressTarget)
+      })
+      .catch((error) => {
+        console.error('Error:', error);
       });
   }
 
-  checkJobStatus(jobId) {
-    fetch(`/export_status?job_id=${jobId}`)
-      .then(response => response.json())
-      .then(data => {
-        const progress = data.percentage;
-        this.progressTarget.style.width = `${progress}%`;
-        if(data.status == "error") {
-            this.stopCheckJobStatus();
-        }else if(data.status === "complete") {
-          this.stopCheckJobStatus()
-          this.downloadTarget.href = `/export_download.xlsx?id=${jobId}`;
-          this.downloadTarget.classList.remove("display-none");
+  subscribe_channel(progressTarget) {
+    this.channel = consumer.subscriptions.create("ExportUserChannel", {
+      connected() {
+        console.log("hello")
+      },
+    
+      disconnected() {
+        // Called when the subscription has been terminated by the server
+      },
+    
+      received(data) {
+        if (data["jid"] == null) {
+          progressTarget.style.width = `${data["progress"]}%`;
+        } else {
+          window.location.href = `/export_download.xlsx?id=${data["jid"]}`
         }
-      })
-  }
-
-  stopCheckJobStatus() {
-    if(this.timer) {
-      clearInterval(this.timer);
-    }
-  }
-
-  disconnect() {
-    this.stopCheckJobStatus();
+      }
+    });
   }
 }
