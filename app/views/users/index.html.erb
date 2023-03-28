@@ -1,15 +1,16 @@
 <div class="width-75 margin-x-auto margin-top-6">
   <h3>Export users</h3>
-
-  <div data-controller="export-user" class="margin-y-2">
-    <button class="btn btn--primary" data-action="click->export-user#export">Export</button>
-    <div class="display-none width-75 margin-y-2" data-export-user-target="progressWrapper">
-      <p class="margin-bottom-2 font-size-1">Processing file</p>
-      <div class="border-radius-2 bg-gray-2" style="height: 12px; overflow: hidden;">
-        <div class="bg-indigo-7 min-height-100" data-export-user-target="progress" style="width: 0%;"></div>
+  <%= turbo_frame_tag "export" do %>
+    <%= form_with url: export_user_path do %>
+      <div data-controller="export-user" class="margin-y-2">
+        <button class="btn btn--primary" data-action="click->export-user#export">Export</button>
+        <div class="display-none width-75 margin-y-2" data-export-user-target="progressWrapper">
+          <p class="margin-bottom-2 font-size-1">Processing file</p>
+          <div class="border-radius-2 bg-gray-2" style="height: 12px; overflow: hidden;">
+            <div class="bg-indigo-7 min-height-100" data-export-user-target="progress" style="width: 0%;"></div>
+          </div>
+        </div>
       </div>
-    </div>
-
-    <%= link_to "Download", "#", class: "display-none", data: { "export-user-target": "download" } %>
-  </div>
+    <% end %>
+  <% end %>
 </div>

@@ -6,7 +6,7 @@ Rails.application.routes.draw do
   get 'users/index'
   root to: "users#index"
 
-  get "/export_user" => "users#export"
+  post "/export_user" => "users#export"
   get "/export_status" => "users#export_status"
   get "/export_download" => "users#export_download"
 end

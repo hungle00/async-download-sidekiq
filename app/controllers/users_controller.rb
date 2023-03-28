@@ -3,8 +3,10 @@ class UsersController < ApplicationController
   end
 
   def export
-    ExportUserJob.perform_async
-    head :accepted
+    @jid = ExportUserJob.perform_async
+    respond_to do |format|
+      format.turbo_stream
+    end
   end
 
   def export_download

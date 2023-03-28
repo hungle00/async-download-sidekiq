@@ -1,0 +1,12 @@
+<%= turbo_stream.replace "export" do %>
+  <%= turbo_stream_from @jid %>
+  <div data-controller="export-user" class="margin-y-2">
+    <button class="btn btn--primary" data-action="click->export-user#export">Export</button>
+    <div class="width-75 margin-y-2" data-export-user-target="progressWrapper">
+      <p class="margin-bottom-2 font-size-1">Processing file</p>
+      <div class="border-radius-2 bg-gray-2" style="height: 12px; overflow: hidden;">
+        <%= render partial: "blob_progress", locals: { jid: @jid, progress: 0 } %>
+      </div>
+    </div>
+  </div>
+<% end %>

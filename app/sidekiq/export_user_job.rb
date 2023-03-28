@@ -15,7 +15,8 @@ class ExportUserJob
       users.each.with_index(1) do |user, idx|
         worksheet.add_row user
         # Sleep 500ms for test
-        ActionCable.server.broadcast "export_user", { progress: idx.to_f / total * 100 } if idx %  5 == 0
+        Turbo::StreamsChannel.broadcast_replace_to self.jid, target: self.jid, partial: "users/blob_progress",
+                                                        locals: { jid: self.jid, progress: ((idx.to_f / total) * 100) }
         sleep 0.1
       end
     end
@@ -23,6 +24,6 @@ class ExportUserJob
     # Save file into tmp with suffix is jobId
     xlsx_package.serialize Rails.root.join("tmp", "users_export_#{self.jid}.xlsx")
 
-    ActionCable.server.broadcast "export_user", { jid: self.jid }
+    # ActionCable.server.broadcast "export_user", { jid: self.jid }
   end
 end
